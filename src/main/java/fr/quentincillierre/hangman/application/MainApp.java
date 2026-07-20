@@ -1,6 +1,5 @@
 package fr.quentincillierre.hangman.application;
 
-import fr.quentincillierre.hangman.controller.GameController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,22 +10,18 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("game-view.fxml"));
+        SceneNavigator.init(primaryStage);
 
+        // The app now starts on the menu screen (fog video + Start button)
+        // instead of jumping straight into the game.
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("menu-view.fxml"));
         Parent root = loader.load();
 
-        GameController controller = loader.getController();
-
-        Scene scene = new Scene(root, 800, 800);
-
-        scene.setOnKeyTyped(event -> {
-            controller.handleKeyboardInput(event.getCharacter());
-        });
+        Scene scene = new Scene(root, 900, 600);
 
         primaryStage.setTitle("HangMan");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
-
         primaryStage.show();
     }
 

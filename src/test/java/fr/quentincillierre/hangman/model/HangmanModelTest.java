@@ -12,7 +12,8 @@ class HangmanModelTest {
 
     @BeforeEach
     void setUp() {
-        model = new HangmanModel("java");
+        // Pass a word and a hint
+        model = new HangmanModel("java", "A programming language");
     }
 
     @Test
@@ -20,22 +21,23 @@ class HangmanModelTest {
         assertEquals("JAVA", model.getWordToGuess().toUpperCase());
         assertEquals(0, model.getCurrentWrongs());
         assertTrue(model.getGuessedLetter().isEmpty());
+        assertEquals("A programming language", model.getHint());
     }
 
     @Test
     void testTryLetterWithCorrectLetter() {
         model.tryLetter('j');
         assertEquals(0, model.getCurrentWrongs());
-        assertTrue(model.getGuessedLetter().contains('J') || model.getGuessedLetter().contains('j'));
-        assertEquals("J___", model.getHiddenWord().toUpperCase());
+        assertTrue(model.getGuessedLetter().contains('J'));
+        assertEquals("J _ _ _", model.getHiddenWord().toUpperCase());
     }
 
     @Test
     void testTryLetterWithIncorrectLetter() {
         model.tryLetter('x');
         assertEquals(1, model.getCurrentWrongs());
-        assertTrue(model.getGuessedLetter().contains('X')  || model.getGuessedLetter().contains('x'));
-        assertEquals("____", model.getHiddenWord());
+        assertTrue(model.getGuessedLetter().contains('X'));
+        assertEquals("_ _ _ _", model.getHiddenWord());
     }
 
     @Test
@@ -50,19 +52,19 @@ class HangmanModelTest {
     void testTryLetterCaseInsensitive() {
         model.tryLetter('J');
         model.tryLetter('a');
-        assertEquals("JA_A", model.getHiddenWord().toUpperCase());
+        assertEquals("J A _ A", model.getHiddenWord().toUpperCase());
         assertEquals(0, model.getCurrentWrongs());
     }
 
     @Test
     void testGetHiddenWord() {
-        assertEquals("____", model.getHiddenWord());
+        assertEquals("_ _ _ _", model.getHiddenWord());
         model.tryLetter('j');
-        assertEquals("J___", model.getHiddenWord().toUpperCase());
+        assertEquals("J _ _ _", model.getHiddenWord().toUpperCase());
         model.tryLetter('a');
-        assertEquals("JA_A", model.getHiddenWord().toUpperCase());
+        assertEquals("J A _ A", model.getHiddenWord().toUpperCase());
         model.tryLetter('v');
-        assertEquals("JAVA", model.getHiddenWord().toUpperCase());
+        assertEquals("J A V A", model.getHiddenWord().toUpperCase());
     }
 
     @Test
@@ -77,7 +79,6 @@ class HangmanModelTest {
     @Test
     void testIsLose() {
         assertFalse(model.isLose());
-        // Make 10 wrong guesses
         model.tryLetter('z');
         model.tryLetter('q');
         model.tryLetter('p');
@@ -104,13 +105,12 @@ class HangmanModelTest {
         model.tryLetter('a');
         Set<Character> guessed = model.getGuessedLetter();
         assertEquals(2, guessed.size());
-        assertTrue(guessed.contains('J') || guessed.contains('j'));
-        assertTrue(guessed.contains('A') || guessed.contains('a'));
+        assertTrue(guessed.contains('J'));
+        assertTrue(guessed.contains('A'));
     }
 
     @Test
     void testMaxWrongGuesses() {
-        // Test that maxWrongs is 10
         model.tryLetter('z');
         model.tryLetter('q');
         model.tryLetter('p');

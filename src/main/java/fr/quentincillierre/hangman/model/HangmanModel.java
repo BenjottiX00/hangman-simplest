@@ -5,15 +5,21 @@ import java.util.Set;
 
 public class HangmanModel {
     private final String wordToGuess;
+    private final String category;
     private final int maxWrongs;
     private int currentWrongs;
     private Set<Character> guessedLetter;
 
-    public HangmanModel(String wordToGuess) {
+    public HangmanModel(String wordToGuess, String category) {
         this.wordToGuess = wordToGuess.toUpperCase();
+        this.category = category;
         this.maxWrongs = 10;
         this.currentWrongs = 0;
         this.guessedLetter = new LinkedHashSet<>();
+    }
+
+    public String getCategory() {
+        return category;
     }
 
     public Set<Character> getGuessedLetter() {
@@ -23,9 +29,18 @@ public class HangmanModel {
     public int getCurrentWrongs() {
         return currentWrongs;
     }
-     public String getWordToGuess(){
+
+    public int getMaxWrongs() {
+        return maxWrongs;
+    }
+
+    public String getHint() {
+        return category;
+    }
+
+    public String getWordToGuess(){
         return this.wordToGuess;
-     }
+    }
 
     public void tryLetter(Character letter){
         letter = Character.toUpperCase(letter);
@@ -41,13 +56,14 @@ public class HangmanModel {
     public String getHiddenWord(){
         StringBuilder hiddenWord = new StringBuilder();
 
-        for (int i = 0; i<wordToGuess.length(); i++){
+        for (int i = 0; i < wordToGuess.length(); i++){
             Character letter = wordToGuess.charAt(i);
             if (guessedLetter.contains(letter)){
                 hiddenWord.append(letter);
-            }else {
+            } else {
                 hiddenWord.append('_');
             }
+            hiddenWord.append(" "); 
         }
         return hiddenWord.toString().trim();
     }
@@ -63,38 +79,4 @@ public class HangmanModel {
     public boolean isLose(){
         return currentWrongs >= maxWrongs;
     }
-
-    public static void main(String[] args){
-        HangmanModel game = new HangmanModel("java");
-        game.tryLetter('R');
-        System.out.println(game.getHiddenWord());
-        game.tryLetter('A');
-        System.out.println(game.getHiddenWord());
-        System.out.println(game.isWin() ? "WIN" : "KEEP PUSHING");
-        game.tryLetter('v');
-        game.tryLetter('j');
-        System.out.println(game.isWin() ? "WIN" : "KEEP PUSHING");
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        System.out.println(game.isLose() ? "LOSE" : "KEEP PUSHING");
-        game.tryLetter('g');
-        System.out.println(game.isLose() ? "LOSE" : "KEEP PUSHING");
-
-        System.out.println(game.getGuessedLetter());
-
-        System.out.println();
-
-
-
-
-    }
-
-
-
 }
