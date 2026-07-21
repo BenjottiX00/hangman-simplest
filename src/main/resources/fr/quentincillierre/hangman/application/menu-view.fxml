@@ -1,22 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.media.MediaView?>
-<?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.MenuController">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.MenuController">
 
-    <!-- Looping fog video fills the whole menu screen -->
-    <MediaView fx:id="backgroundView" fitHeight="600.0" fitWidth="900.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+    <!-- Fog video "covers" the whole 900x600 frame with no white space:
+         fitHeight is pinned to 600 (the frame height) and preserveRatio scales
+         the width up to 1066.67 to match, so nothing is left unfilled. The
+         extra width (166.67px) overflows evenly past both edges of the fixed,
+         non-resizable 900px-wide window, so it's simply never rendered -
+         no clip node needed. Only fitHeight is set (not fitWidth), otherwise
+         preserveRatio would shrink to fit the narrower dimension instead
+         and bring back the letterboxing. -->
+    <MediaView fx:id="backgroundView" fitHeight="600.0" layoutX="-83.33" layoutY="0.0" preserveRatio="true" />
 
-    <StackPane prefHeight="60.0" prefWidth="200.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="350.0">
-        <Button mnemonicParsing="false" onAction="#handleStart" prefHeight="50.0" prefWidth="180.0" text="Start">
-            <font>
-                <Font size="20.0" />
-            </font>
-        </Button>
+    <Label alignment="CENTER" styleClass="menu-title" text="HANGMAN" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="36.0" />
+
+    <StackPane prefHeight="60.0" prefWidth="220.0" AnchorPane.bottomAnchor="60.0" AnchorPane.leftAnchor="340.0">
+        <Button mnemonicParsing="false" onAction="#handleStart" prefHeight="55.0" prefWidth="220.0" styleClass="menu-button" text="PLAY" />
     </StackPane>
 
 </AnchorPane>

@@ -1,0 +1,30 @@
+/* Font registration for the bundled Permanent Marker font. */
+@font-face {
+    src: url('file:src/main/resources/fonts/PermanentMarker-Regular.ttf');
+}
+
+.menu-title {
+    -fx-font-family: "Permanent Marker";
+    -fx-font-size: 64px;
+    -fx-text-fill: black;
+    -fx-effect: dropshadow(gaussian, rgba(255,255,255,0.85), 6, 0.7, 0, 0);
+}
+
+.menu-button {
+    -fx-font-family: "Permanent Marker";
+    -fx-font-size: 22px;
+    -fx-background-color: black;
+    -fx-background-radius: 6;
+    -fx-border-width: 5;
+    -fx-border-color: black;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+}
+
+.menu-button:hover {
+    -fx-background-color: #2b2b2b;
+}
+
+.menu-button:pressed {
+    -fx-background-color: #4d4d4d;
+}

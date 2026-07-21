@@ -18,6 +18,7 @@ public class MainApp extends Application {
         Parent root = loader.load();
 
         Scene scene = new Scene(root, 900, 600);
+        scene.getStylesheets().add(getClass().getResource("menu.css").toExternalForm());
 
         primaryStage.setTitle("HangMan");
         primaryStage.setScene(scene);

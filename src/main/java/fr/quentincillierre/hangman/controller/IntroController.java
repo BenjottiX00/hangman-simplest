@@ -1,6 +1,8 @@
 package fr.quentincillierre.hangman.controller;
 
+import fr.quentincillierre.hangman.application.MediaLoader;
 import fr.quentincillierre.hangman.application.SceneNavigator;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -31,13 +33,21 @@ public class IntroController {
             return;
         }
 
-        String url = getClass().getResource(INTRO_CLIPS[index]).toExternalForm();
-        Media media = new Media(url);
+        Media media = MediaLoader.load(INTRO_CLIPS[index]);
 
         currentPlayer = new MediaPlayer(media);
-        introView.setMediaPlayer(currentPlayer);
-        currentPlayer.setOnEndOfMedia(() -> playClip(index + 1));
-        currentPlayer.play();
+        currentPlayer.setOnError(() ->
+                System.out.println("Intro video error: " + currentPlayer.getError()));
+        currentPlayer.setOnReady(() -> Platform.runLater(() -> {
+            System.out.println("Intro video ready: index=" + index);
+            if (introView != null) {
+                introView.setMediaPlayer(currentPlayer);
+            }
+            currentPlayer.setOnEndOfMedia(() -> playClip(index + 1));
+            currentPlayer.play();
+        }));
+        currentPlayer.setOnPlaying(() -> System.out.println("Intro video playing: index=" + index));
+        currentPlayer.setOnStalled(() -> System.out.println("Intro video stalled: index=" + index));
     }
 
     @FXML

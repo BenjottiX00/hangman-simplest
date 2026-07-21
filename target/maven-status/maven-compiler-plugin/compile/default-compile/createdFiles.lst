@@ -6,4 +6,5 @@ module-info.class
 fr\quentincillierre\hangman\application\SceneNavigator.class
 fr\quentincillierre\hangman\controller\MenuController.class
 fr\quentincillierre\hangman\model\HangmanModel.class
+fr\quentincillierre\hangman\application\MediaLoader.class
 fr\quentincillierre\hangman\model\WordRepository.class

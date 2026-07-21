@@ -1,8 +1,10 @@
 package fr.quentincillierre.hangman.controller;
 
+import fr.quentincillierre.hangman.application.MediaLoader;
 import fr.quentincillierre.hangman.model.HangmanModel;
 import fr.quentincillierre.hangman.model.WordRepository;
 import fr.quentincillierre.hangman.model.WordRepository.WordAndCategory;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -65,7 +67,7 @@ public class GameController {
 
         // Duration isn't known until the media finishes loading; once it is,
         // make sure we're showing the frame that matches the current game state.
-        hangmanPlayer.setOnReady(this::seekHangmanFrame);
+        hangmanPlayer.setOnReady(() -> Platform.runLater(this::seekHangmanFrame));
     }
 
     private void seekHangmanFrame() {
