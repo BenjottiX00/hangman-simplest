@@ -1,10 +1,13 @@
 fr\quentincillierre\hangman\controller\IntroController.class
+fr\quentincillierre\hangman\model\WordRepository$1.class
 fr\quentincillierre\hangman\application\MainApp.class
-fr\quentincillierre\hangman\model\WordRepository$WordAndCategory.class
 fr\quentincillierre\hangman\controller\GameController.class
+fr\quentincillierre\hangman\model\GameSettings.class
 module-info.class
+fr\quentincillierre\hangman\model\WordRepository$Word.class
 fr\quentincillierre\hangman\application\SceneNavigator.class
 fr\quentincillierre\hangman\controller\MenuController.class
+fr\quentincillierre\hangman\model\Difficulty.class
 fr\quentincillierre\hangman\model\HangmanModel.class
 fr\quentincillierre\hangman\application\MediaLoader.class
 fr\quentincillierre\hangman\model\WordRepository.class

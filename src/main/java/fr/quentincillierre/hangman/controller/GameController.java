@@ -1,156 +1,106 @@
 package fr.quentincillierre.hangman.controller;
 
-import fr.quentincillierre.hangman.application.MediaLoader;
+import fr.quentincillierre.hangman.application.SceneNavigator;
+import fr.quentincillierre.hangman.model.GameSettings;
 import fr.quentincillierre.hangman.model.HangmanModel;
-import fr.quentincillierre.hangman.model.WordRepository;
-import fr.quentincillierre.hangman.model.WordRepository.WordAndCategory;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.GridPane;
+import javafx.scene.effect.BoxBlur;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.scene.layout.TilePane;
 import javafx.scene.media.MediaView;
-import javafx.util.Duration;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 
-public class GameController {
+import java.net.URL;
+import java.util.ResourceBundle;
 
-    private static final int KEYBOARD_COLUMNS = 6;
-    private static final String HANGMAN_VIDEO = "/videos/hangman-progress.mp4";
+public class GameController implements Initializable {
 
-    @FXML
-    private Label wordLabel;
-
-    @FXML
-    private Label resultLabel;
-
-    @FXML
-    private Label categoryLabel;
-
-    @FXML
-    private MediaView hangmanMediaView;
-
-    @FXML
-    private GridPane keyboardGrid;
-
-    @FXML
-    private StackPane gameOverPane;
+    @FXML private AnchorPane gameBoard;
+    @FXML private StackPane overlayPane;
+    @FXML private Label categoryLabel;
+    @FXML private Label wordLabel;
+    @FXML private Label resultLabel;
+    @FXML private TilePane keyboardPane;
+    @FXML private MediaView hangmanMediaView;
 
     private HangmanModel model;
-    private WordRepository wordRepository;
-    private MediaPlayer hangmanPlayer;
 
-    @FXML
-    public void initialize() {
-        wordRepository = new WordRepository();
-        setupHangmanMedia();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        Font.loadFont(getClass().getResourceAsStream("/fonts/PermanentMarker-Regular.ttf"), 14);
         startNewGame();
     }
 
-    /**
-     * Loads the hangman video once. Each wrong guess seeks further into the
-     * clip and pauses (rather than swapping between pictures/N-hangman.png
-     * images like before), so the player sees the danger scene creep closer
-     * to its worst moment as mistakes pile up.
-     */
-    private void setupHangmanMedia() {
-        String url = getClass().getResource(HANGMAN_VIDEO).toExternalForm();
-        Media media = new Media(url);
-
-        hangmanPlayer = new MediaPlayer(media);
-        hangmanPlayer.setMute(true);
-        hangmanPlayer.setAutoPlay(false);
-        hangmanMediaView.setMediaPlayer(hangmanPlayer);
-
-        // Duration isn't known until the media finishes loading; once it is,
-        // make sure we're showing the frame that matches the current game state.
-        hangmanPlayer.setOnReady(() -> Platform.runLater(this::seekHangmanFrame));
-    }
-
-    private void seekHangmanFrame() {
-        if (hangmanPlayer == null || model == null || hangmanPlayer.getMedia() == null) {
-            return;
-        }
-
-        Duration total = hangmanPlayer.getMedia().getDuration();
-        if (total == null || total.isUnknown() || total.isIndefinite()) {
-            return;
-        }
-
-        double fraction = Math.min(1.0, model.getCurrentWrongs() / (double) model.getMaxWrongs());
-        hangmanPlayer.pause();
-        hangmanPlayer.seek(total.multiply(fraction));
-    }
-
     private void startNewGame() {
-        WordAndCategory selection = wordRepository.getRandomWord();
-        this.model = new HangmanModel(selection.word(), selection.category());
+        model = new HangmanModel(GameSettings.getDifficulty());
+        categoryLabel.setText(model.getCategory());
+        updateWordDisplay();
+        setupKeyboard();
+    }
 
-        categoryLabel.setText("Category: " + model.getCategory());
-        resultLabel.setOpacity(0);
-        keyboardGrid.setDisable(false);
-        keyboardGrid.getChildren().clear();
+    private void setupKeyboard() {
+        keyboardPane.getChildren().clear();
+        for (char c = 'A'; c <= 'Z'; c++) {
+            Button keyBtn = new Button(String.valueOf(c));
+            keyBtn.getStyleClass().add("keyboard-button");
+            keyBtn.setPrefSize(45, 45);
+            
+            keyBtn.setOnAction(e -> {
+                keyBtn.setDisable(true);
+                handleGuess(keyBtn.getText().charAt(0));
+            });
+            keyboardPane.getChildren().add(keyBtn);
+        }
+    }
 
-        // Hide the restart popup until the game actually ends
-        gameOverPane.setVisible(false);
-        gameOverPane.setManaged(false);
+    private void handleGuess(char letter) {
+        model.guessLetter(letter);
+        updateWordDisplay();
 
-        generateKeyboard();
-        refreshUI();
+        if (model.isVictory()) {
+            showEndGame(true);
+        } else if (model.isGameOver()) {
+            showEndGame(false);
+        }
+    }
+
+    private void updateWordDisplay() {
+        wordLabel.setText(model.getDisplayWord());
+    }
+
+    private void showEndGame(boolean isVictory) {
+        BoxBlur blur = new BoxBlur(10, 10, 3);
+        gameBoard.setEffect(blur);
+        gameBoard.setDisable(true);
+
+        if (isVictory) {
+            resultLabel.setText("VICTORY!");
+            resultLabel.setTextFill(Color.web("#2ecc71")); 
+        } else {
+            resultLabel.setText("GAME OVER\nWORD: " + model.getFullWord());
+            resultLabel.setTextFill(Color.web("#e74c3c")); 
+        }
+
+        overlayPane.setVisible(true);
+        overlayPane.setManaged(true);
     }
 
     @FXML
     private void handleRestart() {
+        gameBoard.setEffect(null);
+        gameBoard.setDisable(false);
+        overlayPane.setVisible(false);
+        overlayPane.setManaged(false);
         startNewGame();
     }
 
-    private void refreshUI() {
-        wordLabel.setText(model.getHiddenWord());
-
-        seekHangmanFrame();
-
-        if (model.isLose() || model.isWin()) {
-            keyboardGrid.setDisable(true);
-
-            String finalWord = String.join(" ", model.getWordToGuess().split(""));
-            wordLabel.setText(finalWord);
-
-            resultLabel.setOpacity(1);
-            resultLabel.setAlignment(Pos.CENTER);
-
-            if (model.isWin()) {
-                resultLabel.setText("Victory");
-            } else {
-                resultLabel.setText("Game Over");
-            }
-
-            // Reveal the restart popup now that the game has ended
-            gameOverPane.setVisible(true);
-            gameOverPane.setManaged(true);
-        }
-    }
-
-    private void generateKeyboard() {
-        for (char c = 'A'; c <= 'Z'; c++) {
-            Button letterButton = new Button(String.valueOf(c));
-            letterButton.setMaxWidth(Double.MAX_VALUE);
-            letterButton.setMaxHeight(Double.MAX_VALUE);
-
-            char letter = c;
-            letterButton.setOnAction(event -> {
-                letterButton.setDisable(true);
-                model.tryLetter(letter);
-                refreshUI();
-            });
-
-            int index = (int) c - 'A';
-            int col = index % KEYBOARD_COLUMNS;
-            int row = index / KEYBOARD_COLUMNS;
-
-            keyboardGrid.add(letterButton, col, row);
-        }
+    @FXML
+    private void handleReturnHome() {
+        SceneNavigator.switchTo("menu-view.fxml");
     }
 }

@@ -2,63 +2,33 @@ package fr.quentincillierre.hangman.controller;
 
 import fr.quentincillierre.hangman.application.MediaLoader;
 import fr.quentincillierre.hangman.application.SceneNavigator;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.media.Media;
+import javafx.fxml.Initializable;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 
-public class IntroController {
+import java.net.URL;
+import java.util.ResourceBundle;
 
-    // Played back to back, in this order. To change the intro sequence,
-    // just edit this list - no other code needs to change.
-    private static final String[] INTRO_CLIPS = {
-            "/videos/intro-1.mp4", // Untitled_design
-            "/videos/intro-2.mp4"  // Greeting_Exchange
-    };
+public class IntroController implements Initializable {
 
-    @FXML
-    private MediaView introView;
+    @FXML private MediaView introView;
+    private MediaPlayer mediaPlayer;
 
-    private MediaPlayer currentPlayer;
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        mediaPlayer = new MediaPlayer(MediaLoader.load("intro-2.mp4"));
+        introView.setMediaPlayer(mediaPlayer);
 
-    @FXML
-    public void initialize() {
-        playClip(0);
-    }
+        // Fixes whitespace by covering the 900x600 window completely
+        introView.setFitHeight(600);
+        introView.setPreserveRatio(true); 
 
-    private void playClip(int index) {
-        if (index >= INTRO_CLIPS.length) {
-            goToGame();
-            return;
-        }
+        mediaPlayer.setOnEndOfMedia(() -> {
+            mediaPlayer.dispose();
+            SceneNavigator.switchTo("game-view.fxml");
+        });
 
-        Media media = MediaLoader.load(INTRO_CLIPS[index]);
-
-        currentPlayer = new MediaPlayer(media);
-        currentPlayer.setOnError(() ->
-                System.out.println("Intro video error: " + currentPlayer.getError()));
-        currentPlayer.setOnReady(() -> Platform.runLater(() -> {
-            System.out.println("Intro video ready: index=" + index);
-            if (introView != null) {
-                introView.setMediaPlayer(currentPlayer);
-            }
-            currentPlayer.setOnEndOfMedia(() -> playClip(index + 1));
-            currentPlayer.play();
-        }));
-        currentPlayer.setOnPlaying(() -> System.out.println("Intro video playing: index=" + index));
-        currentPlayer.setOnStalled(() -> System.out.println("Intro video stalled: index=" + index));
-    }
-
-    @FXML
-    private void handleSkip() {
-        if (currentPlayer != null) {
-            currentPlayer.stop();
-        }
-        goToGame();
-    }
-
-    private void goToGame() {
-        SceneNavigator.switchTo("game-view.fxml");
+        mediaPlayer.play();
     }
 }

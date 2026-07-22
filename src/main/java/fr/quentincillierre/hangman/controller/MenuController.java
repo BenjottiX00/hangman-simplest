@@ -1,57 +1,63 @@
 package fr.quentincillierre.hangman.controller;
 
-import fr.quentincillierre.hangman.application.MediaLoader;
 import fr.quentincillierre.hangman.application.SceneNavigator;
-import javafx.application.Platform;
+import fr.quentincillierre.hangman.model.Difficulty;
+import fr.quentincillierre.hangman.model.GameSettings;
 import javafx.fxml.FXML;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.media.Media;
-import javafx.scene.media.MediaPlayer;
+import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.media.MediaView;
+import javafx.scene.text.Font;
 
-public class MenuController {
+import java.net.URL;
+import java.util.ResourceBundle;
+
+public class MenuController implements Initializable {
+    @FXML private MediaView backgroundView;
+    @FXML private Button btnEasy;
+    @FXML private Button btnMedium;
+    @FXML private Button btnHard;
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Load font programmatically to bypass JavaFX CSS module issues
+        Font.loadFont(getClass().getResourceAsStream("/fonts/PermanentMarker-Regular.ttf"), 14);
+
+        GameSettings.setDifficulty(Difficulty.EASY);
+        updateButtonStyles();
+    }
 
     @FXML
-    private AnchorPane rootPane;
+    private void setEasy() {
+        GameSettings.setDifficulty(Difficulty.EASY);
+        updateButtonStyles();
+    }
 
     @FXML
-    private MediaView backgroundView;
-
-    private MediaPlayer backgroundPlayer;
+    private void setMedium() {
+        GameSettings.setDifficulty(Difficulty.MEDIUM);
+        updateButtonStyles();
+    }
 
     @FXML
-    public void initialize() {
-        var cssUrl = getClass().getClassLoader().getResource("fr/quentincillierre/hangman/application/menu.css");
-        if (cssUrl != null && rootPane != null) {
-            rootPane.getStylesheets().add(cssUrl.toExternalForm());
-        }
+    private void setHard() {
+        GameSettings.setDifficulty(Difficulty.HARD);
+        updateButtonStyles();
+    }
 
-        try {
-            Media media = MediaLoader.load("videos/menu-background.mp4");
-            backgroundPlayer = new MediaPlayer(media);
-            backgroundPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-            backgroundPlayer.setMute(true);
-            backgroundPlayer.setOnError(() ->
-                    System.out.println("Background video error: " + backgroundPlayer.getError()));
-            backgroundPlayer.setOnReady(() -> Platform.runLater(() -> {
-                System.out.println("Background video ready");
-                if (backgroundView != null) {
-                    backgroundView.setMediaPlayer(backgroundPlayer);
-                }
-                backgroundPlayer.play();
-            }));
-            backgroundPlayer.setOnPlaying(() -> System.out.println("Background video playing"));
-            backgroundPlayer.setOnStalled(() -> System.out.println("Background video stalled"));
-        } catch (Exception ex) {
-            System.out.println("Background video could not be loaded: " + ex.getMessage());
-        }
+    private void updateButtonStyles() {
+        btnEasy.setStyle("-fx-border-color: black; -fx-opacity: 0.5;");
+        btnMedium.setStyle("-fx-border-color: black; -fx-opacity: 0.5;");
+        btnHard.setStyle("-fx-border-color: black; -fx-opacity: 0.5;");
+
+        Difficulty current = GameSettings.getDifficulty();
+        if (current == Difficulty.EASY) btnEasy.setStyle("-fx-border-color: white; -fx-opacity: 1.0;");
+        else if (current == Difficulty.MEDIUM) btnMedium.setStyle("-fx-border-color: white; -fx-opacity: 1.0;");
+        else if (current == Difficulty.HARD) btnHard.setStyle("-fx-border-color: white; -fx-opacity: 1.0;");
     }
 
     @FXML
     private void handleStart() {
-        if (backgroundPlayer != null) {
-            backgroundPlayer.stop();
-        }
         SceneNavigator.switchTo("intro-view.fxml");
     }
 }

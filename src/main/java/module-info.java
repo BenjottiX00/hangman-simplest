@@ -2,7 +2,7 @@ module fr.quentincillierre.hangman {
     requires javafx.controls;
     requires transitive javafx.graphics;
     requires javafx.fxml;
-    requires javafx.media;
+    requires transitive javafx.media;
 
     exports fr.quentincillierre.hangman.application;
     opens fr.quentincillierre.hangman.application to javafx.fxml;
