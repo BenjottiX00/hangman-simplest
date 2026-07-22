@@ -10,7 +10,7 @@ public class MainApp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        SceneNavigator.init(primaryStage);
+        SceneNavigator.setPrimaryStage(primaryStage);
 
         // The app now starts on the menu screen (fog video + Start button)
         // instead of jumping straight into the game.
