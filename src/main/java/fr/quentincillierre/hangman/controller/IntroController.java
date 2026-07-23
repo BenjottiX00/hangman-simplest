@@ -1,62 +1,84 @@
 package fr.quentincillierre.hangman.controller;
 
+import fr.quentincillierre.hangman.application.MediaLoader;
 import fr.quentincillierre.hangman.application.SceneNavigator;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.util.Duration;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
+import javafx.scene.media.MediaView;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class IntroController implements Initializable {
-
-    @FXML private ImageView introView;
-
-    private Timeline introTimeline;
+    @FXML private MediaView introView;
+    private MediaPlayer introPlayer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         try {
-            List<Image> frames = loadFrames();
-            if (!frames.isEmpty()) {
-                introView.setImage(frames.get(0));
-                introView.setFitHeight(600);
-                introView.setFitWidth(900);
-                introView.setPreserveRatio(false);
-
-                final int[] index = {0};
-                introTimeline = new Timeline(
-                    new KeyFrame(Duration.millis(180), event -> {
-                        index[0] = (index[0] + 1) % frames.size();
-                        introView.setImage(frames.get(index[0]));
-                    })
-                );
-                introTimeline.setCycleCount(frames.size());
-                introTimeline.setOnFinished(event -> SceneNavigator.switchTo("game-view.fxml"));
-                introTimeline.play();
+            if (introView == null) {
+                System.err.println("IntroController: introView not injected");
+                disposeAndSwitchToGame();
                 return;
             }
-        } catch (Exception e) {
-            System.err.println("FAILED TO LOAD INTRO IMAGE: " + e.getMessage());
-        }
 
-        SceneNavigator.switchTo("game-view.fxml");
+            Media media = MediaLoader.load("intro-2.mp4");
+
+            introPlayer = new MediaPlayer(media);
+            introView.setMediaPlayer(introPlayer);
+
+            introPlayer.setOnEndOfMedia(this::disposeAndSwitchToGame);
+
+            introPlayer.setOnError(() -> {
+                System.err.println("Intro media player error: " + introPlayer.getError());
+                disposeAndSwitchToGame();
+            });
+
+            // Play only once the media is ready to avoid instant end/zero-duration issues
+            introPlayer.setOnReady(() -> {
+                try {
+                    introPlayer.play();
+                } catch (Exception e) {
+                    System.err.println("Failed to play intro video: " + e.getMessage());
+                    disposeAndSwitchToGame();
+                }
+            });
+
+            // If the scene containing this view is removed (switching scenes), dispose resources
+            introView.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene == null) {
+                    if (introPlayer != null) {
+                        try {
+                            introPlayer.stop();
+                            introPlayer.dispose();
+                        } catch (Exception ignored) {}
+                        try { introView.setMediaPlayer(null); } catch (Exception ignored) {}
+                        introPlayer = null;
+                    }
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("Could not load intro video, skipping to game: " + e.getMessage());
+            e.printStackTrace();
+            disposeAndSwitchToGame();
+        }
     }
 
-    private List<Image> loadFrames() {
-        List<Image> frames = new ArrayList<>();
-        for (int i = 0; i <= 4; i++) {
-            URL resource = getClass().getResource("/pictures/" + i + "-hangman.png");
-            if (resource != null) {
-                frames.add(new Image(resource.toExternalForm()));
-            }
+    private void disposeAndSwitchToGame() {
+        if (introPlayer != null) {
+            try {
+                introPlayer.stop();
+                introPlayer.dispose();
+            } catch (Exception ignored) {}
         }
-        return frames;
+        try { introView.setMediaPlayer(null); } catch (Exception ignored) {}
+        introPlayer = null;
+
+        Platform.runLater(() -> {
+            SceneNavigator.switchTo("game-view.fxml");
+        });
     }
 }

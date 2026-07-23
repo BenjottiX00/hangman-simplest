@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.media.MediaView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.TilePane?>
@@ -12,24 +11,27 @@
 
 <StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.GameController">
 
-    <!-- MAIN GAME BOARD (This gets blurred when the game ends) -->
+    <!-- MAIN GAME BOARD -->
     <AnchorPane fx:id="gameBoard" prefHeight="600.0" prefWidth="900.0">
         
-        <!-- Home Icon Button -->
+        <!-- Home Icon Button (Now explicitly wired to handleReturnHome) -->
         <Button layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleReturnHome" styleClass="home-button" text="⌂ HOME" />
 
         <Label fx:id="categoryLabel" alignment="CENTER" styleClass="category-label" text="CATEGORY" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
 
-        <ImageView fx:id="hangmanMediaView" fitHeight="260.0" fitWidth="320.0" layoutX="290.0" layoutY="80.0" preserveRatio="true" AnchorPane.leftAnchor="290.0" AnchorPane.topAnchor="80.0" />
+        <Label fx:id="wordLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="word-label" text="_ _ _ _ _" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
 
-        <Label fx:id="wordLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="word-label" text="_ _ _ _ _" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="350.0" />
+        <!-- MEDIA VIEW (Right side wrapped in a container for the vignette/faded gradient border) -->
+        <StackPane styleClass="media-vignette-container" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="160.0">
+            <MediaView fx:id="hangmanMediaView" fitHeight="260.0" fitWidth="340.0" />
+        </StackPane>
 
-        <!-- Keyboard: TilePane auto-wraps the boxed buttons beautifully -->
-        <TilePane fx:id="keyboardPane" alignment="CENTER" hgap="10.0" vgap="10.0" prefColumns="7" AnchorPane.bottomAnchor="30.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" />
+        <!-- KEYBOARD (Placed precisely in the left-center area) -->
+        <TilePane fx:id="keyboardPane" alignment="CENTER" hgap="8.0" vgap="8.0" prefColumns="6" prefWidth="380.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="180.0" />
         
     </AnchorPane>
 
-    <!-- END GAME OVERLAY (Hidden by default, appears on Victory or Game Over) -->
+    <!-- END GAME OVERLAY -->
     <StackPane fx:id="overlayPane" visible="false" managed="false">
         <Rectangle arcHeight="20.0" arcWidth="20.0" height="220.0" styleClass="game-over-box" width="350.0" />
         <VBox alignment="CENTER" spacing="20.0">
