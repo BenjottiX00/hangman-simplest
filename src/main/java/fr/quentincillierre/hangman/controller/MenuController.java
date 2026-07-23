@@ -27,7 +27,7 @@ public class MenuController implements Initializable {
         Font.loadFont(getClass().getResourceAsStream("/fonts/PermanentMarker-Regular.ttf"), 14);
 
         try {
-            mediaPlayer = new MediaPlayer(MediaLoader.load("menu-background.mp4"));
+            mediaPlayer = new MediaPlayer(MediaLoader.load("videos/menu.mp4"));
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             backgroundView.setMediaPlayer(mediaPlayer);
             mediaPlayer.play();

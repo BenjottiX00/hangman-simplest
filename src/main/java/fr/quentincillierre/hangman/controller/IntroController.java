@@ -25,7 +25,13 @@ public class IntroController implements Initializable {
                 return;
             }
 
-            Media media = MediaLoader.load("intro-2.mp4");
+            Media media;
+            try {
+                media = MediaLoader.load("videos/intro video.mp4");
+            } catch (IllegalArgumentException ex) {
+                System.err.println("Could not load new intro video, falling back: " + ex.getMessage());
+                media = MediaLoader.load("intro-2.mp4");
+            }
 
             introPlayer = new MediaPlayer(media);
             introView.setMediaPlayer(introPlayer);

@@ -20,7 +20,7 @@ public class MainApp extends Application {
         Scene scene = new Scene(root, 900, 600);
         scene.getStylesheets().add(getClass().getResource("menu.css").toExternalForm());
 
-        primaryStage.setTitle("HangMan");
+        primaryStage.setTitle("HangCat");
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
