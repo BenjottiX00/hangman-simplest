@@ -17,6 +17,7 @@ import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.util.Duration;
+import javafx.event.ActionEvent;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -30,6 +31,7 @@ public class GameController implements Initializable {
     @FXML private Label resultLabel;
     @FXML private TilePane keyboardPane;
     @FXML private MediaView hangmanMediaView;
+    @FXML private Button homeButton;
 
     private HangmanModel model;
     private MediaPlayer progressPlayer;
@@ -82,9 +84,15 @@ public class GameController implements Initializable {
 
         if (progressPlayer != null) {
             int mistakes = model.getMistakes();
-            double[] mistakeTimestamps = { 0.0, 2.0, 4.0, 6.0, 8.0, 10.0, 12.0 };
+            // 11 timestamps spread evenly for 10 maximum mistakes.
+            // Adjust these numbers to match the exact seconds in hangman-progress.mp4
+            double[] mistakeTimestamps = { 
+                0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0 
+            };
             int index = Math.min(mistakes, mistakeTimestamps.length - 1);
-            progressPlayer.seek(Duration.seconds(mistakeTimestamps[index]));
+            try {
+                progressPlayer.seek(Duration.seconds(mistakeTimestamps[index]));
+            } catch (Exception ignored) {}
         }
         
         if (model.isVictory()) {
@@ -101,7 +109,10 @@ public class GameController implements Initializable {
     private void showEndGame(boolean isVictory) {
         BoxBlur blur = new BoxBlur(10, 10, 3);
         gameBoard.setEffect(blur);
-        gameBoard.setDisable(true);
+        gameBoard.setDisable(false);
+        if (homeButton != null) {
+            homeButton.setDisable(false);
+        }
 
         if (isVictory) {
             resultLabel.setText("VICTORY!");
@@ -124,7 +135,7 @@ public class GameController implements Initializable {
         startNewGame();
     }
 @FXML
-    private void handleReturnHome() {
+    private void handleReturnHome(javafx.event.ActionEvent event) {
         if (progressPlayer != null) {
             try {
                 progressPlayer.stop();

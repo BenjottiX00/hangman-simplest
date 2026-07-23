@@ -81,10 +81,11 @@
     -fx-background-color: #2b2b2b;
 }
 
-/* Vignette / Faded Gradient Border Effect for the Media Container */
-/* True Vignette / Faded Gradient Border Effect for the Media Container */
-.media-vignette-container {
-    -fx-padding: 10px;
-    -fx-background-color: radial-gradient(center 50% 50%, radius 70%, rgba(255,255,255,0) 50%, rgba(255,255,255,0.85) 100%);
-    -fx-effect: dropshadow(gaussian, rgba(255, 255, 255, 0.9), 30, 0.7, 0, 0);
+/* True Vignette Overlay applied ON TOP of the MediaView */
+.vignette-overlay {
+    -fx-effect: innershadow(gaussian, #f4f4f4, 40, 0.6, 0, 0);
+    -fx-border-color: #f4f4f4;
+    -fx-border-width: 5px;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
 }

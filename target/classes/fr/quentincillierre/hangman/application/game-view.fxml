@@ -8,27 +8,29 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.Region?>
 
 <StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.GameController">
 
     <!-- MAIN GAME BOARD -->
     <AnchorPane fx:id="gameBoard" prefHeight="600.0" prefWidth="900.0">
         
-        <!-- Home Icon Button (Now explicitly wired to handleReturnHome) -->
-        <Button layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleReturnHome" styleClass="home-button" text="⌂ HOME" />
+        <!-- Labels have mouseTransparent="true" so they stop stealing button clicks -->
+        <Label fx:id="categoryLabel" alignment="CENTER" mouseTransparent="true" styleClass="category-label" text="CATEGORY" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
 
-        <Label fx:id="categoryLabel" alignment="CENTER" styleClass="category-label" text="CATEGORY" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="20.0" />
+        <Label fx:id="wordLabel" alignment="CENTER" contentDisplay="CENTER" mouseTransparent="true" styleClass="word-label" text="_ _ _ _ _" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
 
-        <Label fx:id="wordLabel" alignment="CENTER" contentDisplay="CENTER" styleClass="word-label" text="_ _ _ _ _" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
-
-        <!-- MEDIA VIEW (Right side wrapped in a container for the vignette/faded gradient border) -->
-        <StackPane styleClass="media-vignette-container" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="160.0">
+        <!-- MEDIA VIEW WITH VIGNETTE OVERLAY -->
+        <StackPane layoutX="500.0" layoutY="160.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="160.0">
             <MediaView fx:id="hangmanMediaView" fitHeight="260.0" fitWidth="340.0" />
+            <Region prefHeight="260.0" prefWidth="340.0" styleClass="vignette-overlay" mouseTransparent="true" />
         </StackPane>
 
-        <!-- KEYBOARD (Placed precisely in the left-center area) -->
+        <!-- KEYBOARD -->
         <TilePane fx:id="keyboardPane" alignment="CENTER" hgap="8.0" vgap="8.0" prefColumns="6" prefWidth="380.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="180.0" />
         
+        <!-- Home Icon Button (Moved to the bottom of the AnchorPane so it renders ON TOP) -->
+        <Button fx:id="homeButton" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleReturnHome" styleClass="home-button" text="⌂ HOME" />
     </AnchorPane>
 
     <!-- END GAME OVERLAY -->

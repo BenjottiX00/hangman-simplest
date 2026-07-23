@@ -7,7 +7,7 @@ public class HangmanModel {
     private WordRepository.Word currentWord;
     private Set<Character> guessedLetters;
     private int mistakes;
-    private static final int MAX_MISTAKES = 6;
+    private static final int MAX_MISTAKES = 10;
 
     public HangmanModel(Difficulty difficulty) {
         this.currentWord = WordRepository.getRandomWord(difficulty);
