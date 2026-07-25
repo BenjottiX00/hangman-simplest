@@ -1,10 +1,12 @@
 package fr.quentincillierre.hangman.application;
 
+import javafx.animation.FadeTransition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.io.IOException;
 import java.net.URL;
@@ -24,25 +26,47 @@ public class SceneNavigator {
 
         Platform.runLater(() -> {
             try {
-                URL fxmlUrl = resolveResource(fxmlFile);
-                if (fxmlUrl == null) {
-                    throw new IOException("FXML resource not found: " + fxmlFile);
-                }
+                Scene currentScene = primaryStage.getScene();
+                
+                // Create fade-out transition for current scene
+                FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.0), currentScene.getRoot());
+                fadeOut.setFromValue(1.0);
+                fadeOut.setToValue(0.0);
 
-                FXMLLoader loader = new FXMLLoader(fxmlUrl);
-                Parent root = loader.load();
-                Scene scene = new Scene(root, 900, 600);
+                fadeOut.setOnFinished(event -> {
+                    try {
+                        URL fxmlUrl = resolveResource(fxmlFile);
+                        if (fxmlUrl == null) {
+                            throw new IOException("FXML resource not found: " + fxmlFile);
+                        }
 
-                URL cssUrl = resolveResource(getCssFileName(fxmlFile));
-                if (cssUrl != null) {
-                    scene.getStylesheets().add(cssUrl.toExternalForm());
-                }
+                        FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                        Parent root = loader.load();
+                        Scene scene = new Scene(root, 900, 600);
 
-                primaryStage.setScene(scene);
-                primaryStage.show();
-            } catch (IOException e) {
+                        URL cssUrl = resolveResource(getCssFileName(fxmlFile));
+                        if (cssUrl != null) {
+                            scene.getStylesheets().add(cssUrl.toExternalForm());
+                        }
+
+                        primaryStage.setScene(scene);
+                        primaryStage.show();
+
+                        // Create fade-in transition for new scene
+                        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1.0), root);
+                        fadeIn.setFromValue(0.0);
+                        fadeIn.setToValue(1.0);
+                        fadeIn.play();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        System.err.println("Could not navigate to: " + fxmlFile);
+                    }
+                });
+
+                fadeOut.play();
+            } catch (Exception e) {
                 e.printStackTrace();
-                System.err.println("Could not navigate to: " + fxmlFile);
+                System.err.println("Error during scene transition: " + e.getMessage());
             }
         });
     }

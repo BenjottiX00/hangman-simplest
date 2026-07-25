@@ -16,7 +16,6 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
-import javafx.util.Duration;
 import javafx.event.ActionEvent;
 
 import java.net.URL;
@@ -34,20 +33,11 @@ public class GameController implements Initializable {
     @FXML private Button homeButton;
 
     private HangmanModel model;
-    private MediaPlayer progressPlayer;
+    private MediaPlayer mistakePlayer;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         Font.loadFont(getClass().getResourceAsStream("/fonts/PermanentMarker-Regular.ttf"), 14);
-
-        try {
-            progressPlayer = new MediaPlayer(MediaLoader.load("hangman-progress.mp4"));
-            hangmanMediaView.setMediaPlayer(progressPlayer);
-            progressPlayer.pause(); 
-        } catch (Exception e) {
-            System.err.println("Could not load game video: " + e.getMessage());
-        }
-
         startNewGame();
     }
 
@@ -56,10 +46,25 @@ public class GameController implements Initializable {
         categoryLabel.setText(model.getCategory());
         updateWordDisplay();
         setupKeyboard();
+        updateMistakeVideo();
+    }
+
+    private void updateMistakeVideo() {
+        int mistakes = model.getMistakes();
+        String videoFile = String.format("videos/catvideo (%d).mp4", mistakes);
         
-        if (progressPlayer != null) {
-            progressPlayer.seek(Duration.ZERO);
-            progressPlayer.pause();
+        try {
+            if (mistakePlayer != null) {
+                mistakePlayer.stop();
+                mistakePlayer.dispose();
+            }
+            
+            mistakePlayer = new MediaPlayer(MediaLoader.load(videoFile));
+            mistakePlayer.setCycleCount(MediaPlayer.INDEFINITE);
+            hangmanMediaView.setMediaPlayer(mistakePlayer);
+            mistakePlayer.play();
+        } catch (Exception e) {
+            System.err.println("Could not load mistake video " + videoFile + ": " + e.getMessage());
         }
     }
 
@@ -81,19 +86,7 @@ public class GameController implements Initializable {
     private void handleGuess(char letter) {
         model.guessLetter(letter);
         updateWordDisplay();
-
-        if (progressPlayer != null) {
-            int mistakes = model.getMistakes();
-            // 11 timestamps spread evenly for 10 maximum mistakes.
-            // Adjust these numbers to match the exact seconds in hangman-progress.mp4
-            double[] mistakeTimestamps = { 
-                0.0, 1.2, 2.4, 3.6, 4.8, 6.0, 7.2, 8.4, 9.6, 10.8, 12.0 
-            };
-            int index = Math.min(mistakes, mistakeTimestamps.length - 1);
-            try {
-                progressPlayer.seek(Duration.seconds(mistakeTimestamps[index]));
-            } catch (Exception ignored) {}
-        }
+        updateMistakeVideo();
         
         if (model.isVictory()) {
             showEndGame(true);
@@ -136,10 +129,10 @@ public class GameController implements Initializable {
     }
 @FXML
     private void handleReturnHome(javafx.event.ActionEvent event) {
-        if (progressPlayer != null) {
+        if (mistakePlayer != null) {
             try {
-                progressPlayer.stop();
-                progressPlayer.dispose();
+                mistakePlayer.stop();
+                mistakePlayer.dispose();
             } catch (Exception ignored) {}
         }
         SceneNavigator.switchTo("menu-view.fxml");

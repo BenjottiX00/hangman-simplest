@@ -10,8 +10,8 @@
 <AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.MenuController">
 
     <StackPane alignment="CENTER" styleClass="video-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <MediaView fx:id="backgroundView" blendMode="COLOR_BURN" fitHeight="220.0" fitWidth="460.0" preserveRatio="true" />
-        <StackPane mouseTransparent="true" prefHeight="320.0" prefWidth="520.0" styleClass="video-vignette" />
+        <MediaView fx:id="backgroundView" blendMode="COLOR_BURN" fitHeight="600.0" fitWidth="900.0" preserveRatio="false" />
+        <StackPane mouseTransparent="true" prefHeight="600.0" prefWidth="900.0" styleClass="video-vignette" />
     </StackPane>
 
     <Label alignment="CENTER" styleClass="menu-title" text="HANGCAT" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="36.0" />
