@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
@@ -19,6 +20,9 @@ public class MainApp extends Application {
 
         Scene scene = new Scene(root, 900, 600);
         scene.getStylesheets().add(getClass().getResource("menu.css").toExternalForm());
+
+        Image appIcon = new Image(getClass().getResourceAsStream("/videos/HANGCAT FAVICON.png"));
+        primaryStage.getIcons().add(appIcon);
 
         primaryStage.setTitle("HangCat");
         primaryStage.setScene(scene);
