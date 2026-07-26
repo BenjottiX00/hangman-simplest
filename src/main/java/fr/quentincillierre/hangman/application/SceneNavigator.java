@@ -1,0 +1,109 @@
+package fr.quentincillierre.hangman.application;
+
+import javafx.animation.FadeTransition;
+import javafx.application.Platform;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.io.IOException;
+import java.net.URL;
+
+public class SceneNavigator {
+    private static final String VIEW_PACKAGE = "/fr/quentincillierre/hangman/application/";
+    private static Stage primaryStage;
+
+    public static void setPrimaryStage(Stage stage) {
+        primaryStage = stage;
+    }
+
+    public static void switchTo(String fxmlFile) {
+        if (primaryStage == null) {
+            return;
+        }
+
+        // Ensure any active game sounds are stopped when leaving the game
+        try {
+            fr.quentincillierre.hangman.controller.GameController.stopActiveGameSound();
+        } catch (Throwable ignored) {}
+
+        Platform.runLater(() -> {
+            try {
+                URL fxmlUrl = resolveResource(fxmlFile);
+                if (fxmlUrl == null) {
+                    throw new IOException("FXML resource not found: " + fxmlFile);
+                }
+
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                Parent root = loader.load();
+                Scene scene = new Scene(root, 900, 600);
+
+                URL cssUrl = resolveResource(getCssFileName(fxmlFile));
+                if (cssUrl != null) {
+                    scene.getStylesheets().add(cssUrl.toExternalForm());
+                }
+
+                root.setOpacity(0.0);
+                Scene currentScene = primaryStage.getScene();
+                if (currentScene == null || currentScene.getRoot() == null) {
+                    primaryStage.setScene(scene);
+                    primaryStage.show();
+
+                    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.7), root);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                    return;
+                }
+
+                FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.7), currentScene.getRoot());
+                fadeOut.setFromValue(1.0);
+                fadeOut.setToValue(0.0);
+
+                fadeOut.setOnFinished(event -> {
+                    primaryStage.setScene(scene);
+                    primaryStage.show();
+
+                    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.7), root);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                });
+
+                fadeOut.play();
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error during scene transition: " + e.getMessage());
+            }
+        });
+    }
+
+    private static URL resolveResource(String resourceName) {
+        if (resourceName == null || resourceName.isBlank()) {
+            return null;
+        }
+
+        String normalized = resourceName.startsWith("/") ? resourceName : "/" + resourceName;
+        URL resource = SceneNavigator.class.getResource(normalized);
+        if (resource != null) {
+            return resource;
+        }
+
+        return SceneNavigator.class.getResource(VIEW_PACKAGE + resourceName);
+    }
+
+    private static String getCssFileName(String fxmlFile) {
+        if (fxmlFile == null) {
+            return null;
+        }
+        if (fxmlFile.contains("menu")) {
+            return "menu.css";
+        }
+        if (fxmlFile.contains("game")) {
+            return "game.css";
+        }
+        return null;
+    }
+}

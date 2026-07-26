@@ -1,100 +1,74 @@
 package fr.quentincillierre.hangman.model;
 
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.Set;
 
 public class HangmanModel {
-    private final String wordToGuess;
-    private final int maxWrongs;
-    private int currentWrongs;
-    private Set<Character> guessedLetter;
+    private WordRepository.Word currentWord;
+    private Set<Character> guessedLetters;
+    private int mistakes;
+    private static final int MAX_MISTAKES = 10;
 
-    public HangmanModel(String wordToGuess) {
-        this.wordToGuess = wordToGuess.toUpperCase();
-        this.maxWrongs = 10;
-        this.currentWrongs = 0;
-        this.guessedLetter = new LinkedHashSet<>();
+    public HangmanModel(Difficulty difficulty) {
+        this.currentWord = WordRepository.getRandomWord(difficulty);
+        this.guessedLetters = new HashSet<>();
+        this.mistakes = 0;
+        
+        // Auto-reveal spaces so multi-word phrases don't block victories in Hard Mode
+        this.guessedLetters.add(' ');
     }
 
-    public Set<Character> getGuessedLetter() {
-        return guessedLetter;
-    }
-
-    public int getCurrentWrongs() {
-        return currentWrongs;
-    }
-     public String getWordToGuess(){
-        return this.wordToGuess;
-     }
-
-    public void tryLetter(Character letter){
-        letter = Character.toUpperCase(letter);
-        if (this.guessedLetter.contains(letter)){
-            return;
+    public boolean guessLetter(char letter) {
+        if (isGameOver() || isVictory()) return false;
+        
+        char upperLetter = Character.toUpperCase(letter);
+        if (guessedLetters.contains(upperLetter)) {
+            return false;
         }
-        if (!wordToGuess.contains(letter.toString())){
-            currentWrongs++;
-        }
-        guessedLetter.add(letter);
-    }
 
-    public String getHiddenWord(){
-        StringBuilder hiddenWord = new StringBuilder();
+        guessedLetters.add(upperLetter);
 
-        for (int i = 0; i<wordToGuess.length(); i++){
-            Character letter = wordToGuess.charAt(i);
-            if (guessedLetter.contains(letter)){
-                hiddenWord.append(letter);
-            }else {
-                hiddenWord.append('_');
-            }
-        }
-        return hiddenWord.toString().trim();
-    }
-
-    public boolean isWin(){
-        for (Character letter : this.wordToGuess.toCharArray()){
-            if (!this.guessedLetter.contains(letter))
-                return false;
+        if (!currentWord.text.contains(String.valueOf(upperLetter))) {
+            mistakes++;
+            return false;
         }
         return true;
     }
 
-    public boolean isLose(){
-        return currentWrongs >= maxWrongs;
+    public String getDisplayWord() {
+        StringBuilder display = new StringBuilder();
+        for (char c : currentWord.text.toCharArray()) {
+            if (guessedLetters.contains(c)) {
+                display.append(c).append(" ");
+            } else {
+                display.append("_ ");
+            }
+        }
+        return display.toString().trim();
     }
 
-    public static void main(String[] args){
-        HangmanModel game = new HangmanModel("java");
-        game.tryLetter('R');
-        System.out.println(game.getHiddenWord());
-        game.tryLetter('A');
-        System.out.println(game.getHiddenWord());
-        System.out.println(game.isWin() ? "WIN" : "KEEP PUSHING");
-        game.tryLetter('v');
-        game.tryLetter('j');
-        System.out.println(game.isWin() ? "WIN" : "KEEP PUSHING");
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        game.tryLetter('g');
-        System.out.println(game.isLose() ? "LOSE" : "KEEP PUSHING");
-        game.tryLetter('g');
-        System.out.println(game.isLose() ? "LOSE" : "KEEP PUSHING");
-
-        System.out.println(game.getGuessedLetter());
-
-        System.out.println();
-
-
-
-
+    public String getCategory() {
+        return currentWord.category;
     }
 
+    public String getFullWord() {
+        return currentWord.text;
+    }
 
+    public int getMistakes() {
+        return mistakes;
+    }
 
+    public boolean isGameOver() {
+        return mistakes >= MAX_MISTAKES;
+    }
+
+    public boolean isVictory() {
+        for (char c : currentWord.text.toCharArray()) {
+            if (!guessedLetters.contains(c)) {
+                return false;
+            }
+        }
+        return true;
+    }
 }
