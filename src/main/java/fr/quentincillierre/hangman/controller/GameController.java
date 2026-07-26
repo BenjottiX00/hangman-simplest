@@ -2,12 +2,14 @@ package fr.quentincillierre.hangman.controller;
 
 import fr.quentincillierre.hangman.application.MediaLoader;
 import fr.quentincillierre.hangman.application.SceneNavigator;
+import fr.quentincillierre.hangman.model.Difficulty;
 import fr.quentincillierre.hangman.model.GameSettings;
 import fr.quentincillierre.hangman.model.HangmanModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
 import javafx.scene.effect.BoxBlur;
 import javafx.scene.layout.AnchorPane;
@@ -44,6 +46,7 @@ public class GameController implements Initializable {
     @FXML private MediaView tryAgainMediaView;
     @FXML private ImageView lineOverlay;
     @FXML private Button homeButton;
+    @FXML private Button fishButton;
 
     private HangmanModel model;
     private MediaPlayer mistakePlayer;
@@ -59,6 +62,7 @@ public class GameController implements Initializable {
     private int currentMistakes = -1;
     private javafx.animation.ParallelTransition shakeTransition;
     private static GameController activeInstance;
+    private int currentRoundFish = 10;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -98,15 +102,18 @@ public class GameController implements Initializable {
             }
         });
 
+        setupFishButton();
         startNewGame();
     }
 
     private void startNewGame() {
         model = new HangmanModel(GameSettings.getDifficulty());
+        currentRoundFish = 10;
         currentMistakes = -1;
         categoryLabel.setText(model.getCategory());
         updateWordDisplay();
         setupKeyboard();
+        updateFishButton();
         updateMistakeVideo();
 
         // Start looping game stage sound (only during gameplay)
@@ -188,6 +195,24 @@ public class GameController implements Initializable {
             System.err.println("Could not preload defeat sound: " + ex.getMessage());
             defeatSoundMedia = null;
         }
+    }
+
+    private void setupFishButton() {
+        if (fishButton == null) {
+            return;
+        }
+
+        fishButton.setContentDisplay(ContentDisplay.CENTER);
+        fishButton.setGraphicTextGap(0);
+    }
+
+    private void updateFishButton() {
+        if (fishButton == null) {
+            return;
+        }
+        int balance = GameSettings.getFishBalance(GameSettings.getDifficulty());
+        fishButton.setText(String.format("🐟 %d  BUY HINT", balance));
+        fishButton.setDisable(balance < 3 || model == null || !model.hasHiddenLetters());
     }
 
     private void updateMistakeVideo() {
@@ -607,6 +632,18 @@ public class GameController implements Initializable {
         }
     }
 
+    private void playBuyHintSound() {
+        try {
+            String buyHintPath = "soundEffects/buyHint.mp3";
+            if (MediaLoader.exists(buyHintPath)) {
+                MediaPlayer p = new MediaPlayer(MediaLoader.load(buyHintPath));
+                p.setOnEndOfMedia(() -> { try { p.stop(); p.dispose(); } catch (Exception ignored) {} });
+                p.setOnError(() -> { try { p.stop(); p.dispose(); } catch (Exception ignored) {} });
+                p.play();
+            }
+        } catch (Exception ignored) {}
+    }
+
     private void playWrongSound() {
         if (wrongSoundMedia == null) return;
         try {
@@ -680,6 +717,8 @@ public class GameController implements Initializable {
 
         if (model.getMistakes() != previousMistakes) {
             if (model.getMistakes() > previousMistakes) {
+                currentRoundFish = Math.max(0, currentRoundFish - 1);
+                updateFishButton();
                 playWrongSound();
                 // mark the pressed key as wrong (red-gray)
                 Platform.runLater(() -> {
@@ -724,11 +763,30 @@ public class GameController implements Initializable {
         }
     }
 
+    @FXML
+    private void handleBuyHint() {
+        Difficulty difficulty = GameSettings.getDifficulty();
+        if (model == null || GameSettings.getFishBalance(difficulty) < 3 || !model.hasHiddenLetters()) {
+            return;
+        }
+
+        if (!model.revealHint()) {
+            return;
+        }
+
+        GameSettings.spendFish(difficulty, 3);
+        playBuyHintSound();
+        updateWordDisplay();
+        updateFishButton();
+    }
+
     private void updateWordDisplay() {
         wordLabel.setText(model.getDisplayWord());
     }
 
     private void showEndGame(boolean isVictory) {
+        GameSettings.addFish(GameSettings.getDifficulty(), currentRoundFish);
+        updateFishButton();
         // Prepare result label immediately
         if (isVictory) {
             resultLabel.setText("VICTORY!");

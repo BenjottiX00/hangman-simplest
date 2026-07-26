@@ -30,6 +30,8 @@
 
         <!-- KEYBOARD -->
         <TilePane fx:id="keyboardPane" alignment="CENTER" hgap="8.0" prefColumns="6" prefWidth="400.0" vgap="8.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="250.0" />
+
+        <Button fx:id="fishButton" alignment="CENTER" onAction="#handleBuyHint" prefHeight="54.0" prefWidth="220.0" styleClass="fish-button" text="🐟 10  BUY HINT" AnchorPane.bottomAnchor="24.0" AnchorPane.leftAnchor="340.0" />
         
         <!-- Home Icon Button (Moved to the bottom of the AnchorPane so it renders ON TOP) -->
         <Button fx:id="homeButton" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleReturnHome" styleClass="home-button" text="⌂ HOME" />

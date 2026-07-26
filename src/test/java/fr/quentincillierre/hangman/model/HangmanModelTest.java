@@ -49,4 +49,22 @@ class HangmanModelTest {
         assertFalse(result2, "Guessing a duplicate letter should return false");
         assertEquals(mistakesAfterFirst, model.getMistakes(), "Mistakes should not increase on a duplicate guess");
     }
+
+    @Test
+    void testRevealHintRevealsAnUnrevealedLetter() {
+        HangmanModel model = new HangmanModel("APPLE", "FRUITS");
+
+        assertTrue(model.hasHiddenLetters(), "The word should have hidden letters to reveal");
+        assertTrue(model.revealHint(), "A hint should be available when letters are still hidden");
+        assertTrue(model.getDisplayWord().contains("A"), "The revealed hint should be shown in the display");
+    }
+
+    @Test
+    void testRevealHintReturnsFalseWhenNoHiddenLettersRemain() {
+        HangmanModel model = new HangmanModel("A", "FRUITS");
+
+        model.guessLetter('A');
+        assertFalse(model.hasHiddenLetters(), "The word should have no hidden letters left");
+        assertFalse(model.revealHint(), "No hint should be available once the word is fully revealed");
+    }
 }
