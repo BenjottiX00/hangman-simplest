@@ -8,21 +8,10 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.shape.Rectangle?>
 
-<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.GameController">
-
-    <!-- END GAME OVERLAY -->
-    <StackPane fx:id="overlayPane" managed="false" visible="false">
-        <Rectangle arcHeight="20.0" arcWidth="20.0" height="220.0" styleClass="game-over-box" width="350.0" />
-        <VBox alignment="CENTER" spacing="20.0">
-            <Label fx:id="resultLabel" alignment="CENTER" styleClass="result-label" text="Result" />
-            <VBox alignment="CENTER" spacing="10.0">
-                <Button mnemonicParsing="false" onAction="#handleRestart" prefHeight="46.0" prefWidth="200.0" styleClass="restart-button" text="PLAY AGAIN" />
-                <Button mnemonicParsing="false" onAction="#handleReturnHome" prefHeight="46.0" prefWidth="200.0" styleClass="restart-button" text="MAIN MENU" />
-            </VBox>
-        </VBox>
-    </StackPane>
+<StackPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.GameController">
 
     <!-- MAIN GAME BOARD -->
     <AnchorPane fx:id="gameBoard" prefHeight="600.0" prefWidth="900.0">
@@ -33,26 +22,37 @@
         <Label fx:id="wordLabel" alignment="CENTER" contentDisplay="CENTER" mouseTransparent="true" styleClass="word-label" text="_ _ _ _ _" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="80.0" />
 
         <!-- MEDIA VIEW WITH VIGNETTE OVERLAY -->
-        <StackPane layoutX="500.0" layoutY="160.0" AnchorPane.rightAnchor="60.0" AnchorPane.topAnchor="160.0">
-            <MediaView fx:id="hangmanMediaView" blendMode="COLOR_BURN" fitHeight="260.0" fitWidth="340.0" />
-            <Region mouseTransparent="true" prefHeight="381.0" prefWidth="340.0" styleClass="vignette-overlay" />
+        <StackPane AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="120.0">
+            <MediaView fx:id="hangmanMediaView" blendMode="MULTIPLY" fitHeight="420.0" fitWidth="560.0" preserveRatio="true" />
+            <ImageView fx:id="lineOverlay" pickOnBounds="false" mouseTransparent="true" fitWidth="600.0" fitHeight="460.0" preserveRatio="true" opacity="0.95" StackPane.alignment="TOP_RIGHT" translateX="-40" translateY="20" />
+            <Region mouseTransparent="true" prefHeight="420.0" prefWidth="560.0" styleClass="vignette-overlay" />
         </StackPane>
 
         <!-- KEYBOARD -->
-        <TilePane fx:id="keyboardPane" alignment="CENTER" hgap="8.0" prefColumns="6" prefWidth="380.0" vgap="8.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="180.0" />
+        <TilePane fx:id="keyboardPane" alignment="CENTER" hgap="8.0" prefColumns="6" prefWidth="400.0" vgap="8.0" AnchorPane.bottomAnchor="100.0" AnchorPane.leftAnchor="40.0" AnchorPane.topAnchor="250.0" />
         
         <!-- Home Icon Button (Moved to the bottom of the AnchorPane so it renders ON TOP) -->
         <Button fx:id="homeButton" layoutX="20.0" layoutY="20.0" mnemonicParsing="false" onAction="#handleReturnHome" styleClass="home-button" text="⌂ HOME" />
     </AnchorPane>
 
-</StackPane>
-       </VBox>
-    </StackPane>
-
-</StackPane>    </VBox>
-    </StackPane>
-
-</StackPane>   </VBox>
+    <!-- END GAME OVERLAY -->
+    <StackPane fx:id="overlayPane" alignment="CENTER" pickOnBounds="true" visible="false">
+        <Region prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: rgba(0,0,0,0.35);" />
+        <StackPane alignment="CENTER" prefHeight="340.0" prefWidth="520.0">
+            <Rectangle arcHeight="20.0" arcWidth="20.0" height="340.0" styleClass="game-over-box" width="520.0" />
+            <VBox alignment="CENTER" spacing="8.0" style="-fx-padding: 5;" prefWidth="500.0">
+                <Label fx:id="resultLabel" alignment="CENTER" styleClass="result-label" text="Result" />
+                <Region/>
+                <StackPane alignment="CENTER" prefHeight="160.0" prefWidth="560.0">
+                    <MediaView fx:id="tryAgainMediaView" fitHeight="200.0" fitWidth="520.0" preserveRatio="true" />
+                </StackPane>
+                <Region prefHeight="1.0" />
+                <VBox alignment="CENTER" spacing="8.0">
+                    <Button mnemonicParsing="false" onAction="#handleRestart" prefHeight="40.0" prefWidth="180.0" styleClass="restart-button" text="PLAY AGAIN" />
+                    <Button mnemonicParsing="false" onAction="#handleReturnHome" prefHeight="40.0" prefWidth="180.0" styleClass="restart-button" text="MAIN MENU" />
+                </VBox>
+            </VBox>
+        </StackPane>
     </StackPane>
 
 </StackPane>

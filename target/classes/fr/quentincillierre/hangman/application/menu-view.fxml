@@ -7,10 +7,10 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.media.MediaView?>
 
-<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.MenuController">
+<AnchorPane fx:id="rootPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.MenuController">
 
     <StackPane alignment="CENTER" styleClass="video-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <MediaView fx:id="backgroundView" blendMode="COLOR_BURN" fitHeight="600.0" fitWidth="900.0" preserveRatio="false" />
+        <MediaView fx:id="backgroundView" blendMode="MULTIPLY" fitHeight="600.0" fitWidth="900.0" preserveRatio="false" />
         <StackPane mouseTransparent="true" prefHeight="600.0" prefWidth="900.0" styleClass="video-vignette" />
     </StackPane>
 

@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.media.MediaView?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@menu.css" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.IntroController">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" stylesheets="@menu.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.quentincillierre.hangman.controller.IntroController">
 
     <StackPane alignment="CENTER" styleClass="video-container" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <MediaView fx:id="introView" fitHeight="600.0" fitWidth="900.0" preserveRatio="false" />
     </StackPane>
+
+    <Button fx:id="skipButton" mnemonicParsing="false" onAction="#handleSkipIntro" prefHeight="46.0" prefWidth="140.0" styleClass="menu-button" text="SKIP" AnchorPane.bottomAnchor="20.0" AnchorPane.rightAnchor="20.0" />
 
 </AnchorPane>

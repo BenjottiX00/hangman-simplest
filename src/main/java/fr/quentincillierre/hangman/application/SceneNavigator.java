@@ -24,43 +24,52 @@ public class SceneNavigator {
             return;
         }
 
+        // Ensure any active game sounds are stopped when leaving the game
+        try {
+            fr.quentincillierre.hangman.controller.GameController.stopActiveGameSound();
+        } catch (Throwable ignored) {}
+
         Platform.runLater(() -> {
             try {
+                URL fxmlUrl = resolveResource(fxmlFile);
+                if (fxmlUrl == null) {
+                    throw new IOException("FXML resource not found: " + fxmlFile);
+                }
+
+                FXMLLoader loader = new FXMLLoader(fxmlUrl);
+                Parent root = loader.load();
+                Scene scene = new Scene(root, 900, 600);
+
+                URL cssUrl = resolveResource(getCssFileName(fxmlFile));
+                if (cssUrl != null) {
+                    scene.getStylesheets().add(cssUrl.toExternalForm());
+                }
+
+                root.setOpacity(0.0);
                 Scene currentScene = primaryStage.getScene();
-                
-                // Create fade-out transition for current scene
-                FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.0), currentScene.getRoot());
+                if (currentScene == null || currentScene.getRoot() == null) {
+                    primaryStage.setScene(scene);
+                    primaryStage.show();
+
+                    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.7), root);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
+                    return;
+                }
+
+                FadeTransition fadeOut = new FadeTransition(Duration.seconds(0.7), currentScene.getRoot());
                 fadeOut.setFromValue(1.0);
                 fadeOut.setToValue(0.0);
 
                 fadeOut.setOnFinished(event -> {
-                    try {
-                        URL fxmlUrl = resolveResource(fxmlFile);
-                        if (fxmlUrl == null) {
-                            throw new IOException("FXML resource not found: " + fxmlFile);
-                        }
+                    primaryStage.setScene(scene);
+                    primaryStage.show();
 
-                        FXMLLoader loader = new FXMLLoader(fxmlUrl);
-                        Parent root = loader.load();
-                        Scene scene = new Scene(root, 900, 600);
-
-                        URL cssUrl = resolveResource(getCssFileName(fxmlFile));
-                        if (cssUrl != null) {
-                            scene.getStylesheets().add(cssUrl.toExternalForm());
-                        }
-
-                        primaryStage.setScene(scene);
-                        primaryStage.show();
-
-                        // Create fade-in transition for new scene
-                        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1.0), root);
-                        fadeIn.setFromValue(0.0);
-                        fadeIn.setToValue(1.0);
-                        fadeIn.play();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        System.err.println("Could not navigate to: " + fxmlFile);
-                    }
+                    FadeTransition fadeIn = new FadeTransition(Duration.seconds(0.7), root);
+                    fadeIn.setFromValue(0.0);
+                    fadeIn.setToValue(1.0);
+                    fadeIn.play();
                 });
 
                 fadeOut.play();
