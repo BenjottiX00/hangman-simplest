@@ -6,9 +6,9 @@
 
 .word-label {
     -fx-font-family: "Permanent Marker";
-    -fx-font-size: 38px;
+    -fx-font-size: 28px;
     -fx-text-fill: black;
-    -fx-letter-spacing: 5px;
+    -fx-letter-spacing: 3px;
 }
 
 .result-label {
