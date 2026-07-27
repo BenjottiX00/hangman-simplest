@@ -26,6 +26,14 @@ public class GameSettings {
         return fishBanks.getOrDefault(difficulty, 0);
     }
 
+    public static int getHintCost(Difficulty difficulty) {
+        return switch (difficulty) {
+            case EASY -> 2;
+            case MEDIUM -> 3;
+            case HARD -> 4;
+        };
+    }
+
     public static void addFish(Difficulty difficulty, int amount) {
         fishBanks.put(difficulty, Math.max(0, getFishBalance(difficulty) + amount));
     }

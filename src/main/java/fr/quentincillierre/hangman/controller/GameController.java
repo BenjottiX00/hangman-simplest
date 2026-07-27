@@ -210,9 +210,11 @@ public class GameController implements Initializable {
         if (fishButton == null) {
             return;
         }
-        int balance = GameSettings.getFishBalance(GameSettings.getDifficulty());
+        Difficulty difficulty = GameSettings.getDifficulty();
+        int balance = GameSettings.getFishBalance(difficulty);
+        int hintCost = GameSettings.getHintCost(difficulty);
         fishButton.setText(String.format("🐟 %d  BUY HINT", balance));
-        fishButton.setDisable(balance < 3 || model == null || !model.hasHiddenLetters());
+        fishButton.setDisable(balance < hintCost || model == null || !model.hasHiddenLetters());
     }
 
     private void updateMistakeVideo() {
@@ -766,7 +768,8 @@ public class GameController implements Initializable {
     @FXML
     private void handleBuyHint() {
         Difficulty difficulty = GameSettings.getDifficulty();
-        if (model == null || GameSettings.getFishBalance(difficulty) < 3 || !model.hasHiddenLetters()) {
+        int hintCost = GameSettings.getHintCost(difficulty);
+        if (model == null || GameSettings.getFishBalance(difficulty) < hintCost || !model.hasHiddenLetters()) {
             return;
         }
 
@@ -774,7 +777,7 @@ public class GameController implements Initializable {
             return;
         }
 
-        GameSettings.spendFish(difficulty, 3);
+        GameSettings.spendFish(difficulty, hintCost);
         playBuyHintSound();
         updateWordDisplay();
         updateFishButton();

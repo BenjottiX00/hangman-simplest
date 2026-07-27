@@ -1,0 +1,4 @@
+--patch-module
+fr.quentincillierre.hangman=_
+--add-reads
+fr.quentincillierre.hangman=ALL-UNNAMED
