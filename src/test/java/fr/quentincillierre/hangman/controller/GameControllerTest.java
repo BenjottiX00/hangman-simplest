@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -34,6 +35,7 @@ class GameControllerTest {
         AnchorPane gameBoard = new AnchorPane();
         StackPane overlayPane = new StackPane();
         Label resultLabel = new Label();
+        Label fishRewardLabel = new Label();
         Label categoryLabel = new Label();
         Label wordLabel = new Label();
         TilePane keyboardPane = new TilePane();
@@ -43,6 +45,7 @@ class GameControllerTest {
         setField(controller, "gameBoard", gameBoard);
         setField(controller, "overlayPane", overlayPane);
         setField(controller, "resultLabel", resultLabel);
+        setField(controller, "fishRewardLabel", fishRewardLabel);
         setField(controller, "categoryLabel", categoryLabel);
         setField(controller, "wordLabel", wordLabel);
         setField(controller, "keyboardPane", keyboardPane);
@@ -58,6 +61,8 @@ class GameControllerTest {
         assertFalse(gameBoard.isDisable(), "The game board should remain interactive so the home button stays clickable");
         assertFalse(homeButton.isDisabled(), "The home button should remain enabled after the game ends");
         assertTrue(overlayPane.isVisible(), "The end-of-game overlay should still appear");
+        assertTrue(fishRewardLabel.isVisible(), "Victory should show the fish reward message");
+        assertEquals("You earned 10 fishes!", fishRewardLabel.getText(), "Victory should display the fish reward earned in the current game");
     }
 
     private static void setField(Object target, String fieldName, Object value) throws Exception {

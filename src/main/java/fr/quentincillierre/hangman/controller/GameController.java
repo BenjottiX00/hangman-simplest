@@ -41,6 +41,7 @@ public class GameController implements Initializable {
     @FXML private Label categoryLabel;
     @FXML private Label wordLabel;
     @FXML private Label resultLabel;
+    @FXML private Label fishRewardLabel;
     @FXML private TilePane keyboardPane;
     @FXML private MediaView hangmanMediaView;
     @FXML private MediaView tryAgainMediaView;
@@ -114,6 +115,11 @@ public class GameController implements Initializable {
         updateWordDisplay();
         setupKeyboard();
         updateFishButton();
+        if (fishRewardLabel != null) {
+            fishRewardLabel.setVisible(false);
+            fishRewardLabel.setManaged(false);
+            fishRewardLabel.setText("");
+        }
         updateMistakeVideo();
 
         // Start looping game stage sound (only during gameplay)
@@ -794,9 +800,19 @@ public class GameController implements Initializable {
         if (isVictory) {
             resultLabel.setText("VICTORY!");
             resultLabel.setTextFill(Color.web("#2ecc71"));
+            if (fishRewardLabel != null) {
+                fishRewardLabel.setText(String.format("You earned %d %s!", currentRoundFish, currentRoundFish == 1 ? "fish" : "fishes"));
+                fishRewardLabel.setVisible(true);
+                fishRewardLabel.setManaged(true);
+            }
         } else {
             resultLabel.setText("GAME OVER");
             resultLabel.setTextFill(Color.web("#e74c3c"));
+            if (fishRewardLabel != null) {
+                fishRewardLabel.setVisible(false);
+                fishRewardLabel.setManaged(false);
+                fishRewardLabel.setText("");
+            }
         }
 
         // Fade the full word first, then show overlay and start video

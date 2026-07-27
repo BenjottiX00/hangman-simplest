@@ -44,6 +44,7 @@
             <Rectangle arcHeight="20.0" arcWidth="20.0" height="340.0" styleClass="game-over-box" width="520.0" />
             <VBox alignment="CENTER" spacing="8.0" style="-fx-padding: 5;" prefWidth="500.0">
                 <Label fx:id="resultLabel" alignment="CENTER" styleClass="result-label" text="Result" />
+                <Label fx:id="fishRewardLabel" alignment="CENTER" managed="false" maxWidth="460.0" mouseTransparent="true" style="-fx-font-size: 18px; -fx-text-fill: #f5d76e;" text="" visible="false" wrapText="true" />
                 <Region/>
                 <StackPane alignment="CENTER" prefHeight="160.0" prefWidth="560.0">
                     <MediaView fx:id="tryAgainMediaView" fitHeight="200.0" fitWidth="520.0" preserveRatio="true" />
